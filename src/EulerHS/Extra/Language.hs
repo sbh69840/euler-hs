@@ -227,7 +227,7 @@ rHgetB cName k f = do
 --
 -- mtl version of the original function.
 rHset :: (HasCallStack, ToJSON v, L.MonadFlow m)
-  => RedisName -> TextKey -> TextField -> v -> m (Either T.KVDBReply Bool)
+  => RedisName -> TextKey -> TextField -> v -> m (Either T.KVDBReply Integer)
 rHset cName k f v = rHsetB cName k' f' v'
   where
     k' = TE.encodeUtf8 k
@@ -240,7 +240,7 @@ rHset cName k f v = rHsetB cName k' f' v'
 -- mtl version of the original function.
 -- Additionally, logs the error may happen.
 rHsetB :: (HasCallStack, L.MonadFlow m)
-  => RedisName -> ByteKey -> ByteField -> ByteValue -> m (Either T.KVDBReply Bool)
+  => RedisName -> ByteKey -> ByteField -> ByteValue -> m (Either T.KVDBReply Integer)
 rHsetB cName k f v = do
   res <- L.runKVDB cName $
     L.hset k f v

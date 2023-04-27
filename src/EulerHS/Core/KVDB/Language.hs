@@ -98,7 +98,7 @@ data KeyValueF f next where
   Del     :: [KVDBKey] -> (f Integer -> next) -> KeyValueF f next
   Expire  :: KVDBKey -> KVDBDuration -> (f Bool -> next) -> KeyValueF f next
   Incr    :: KVDBKey -> (f Integer -> next) -> KeyValueF f next
-  HSet    :: KVDBKey -> KVDBField -> KVDBValue -> (f Bool -> next) -> KeyValueF f next
+  HSet    :: KVDBKey -> KVDBField -> KVDBValue -> (f Integer -> next) -> KeyValueF f next
   HGet    :: KVDBKey -> KVDBField -> (f (Maybe ByteString) -> next) -> KeyValueF f next
   XAdd    :: KVDBStream -> KVDBStreamEntryIDInput -> [KVDBStreamItem] -> (f KVDBStreamEntryID -> next) -> KeyValueF f next
   XLen    :: KVDBStream -> (f Integer -> next) -> KeyValueF f next
@@ -161,7 +161,7 @@ setexTx :: KVDBKey -> KVDBDuration -> KVDBValue -> KVDBTx (R.Queued T.KVDBStatus
 setexTx key ex value = liftFC $ SetEx key ex value id
 
 -- | Set the value of a hash field. Transaction version.
-hsetTx :: KVDBKey -> KVDBField -> KVDBValue -> KVDBTx (R.Queued Bool)
+hsetTx :: KVDBKey -> KVDBField -> KVDBValue -> KVDBTx (R.Queued Integer)
 hsetTx key field value = liftFC $ HSet key field value id
 
 -- | Get the value of a key. Transaction version.
@@ -219,7 +219,7 @@ incr :: KVDBKey -> KVDB Integer
 incr key = ExceptT $ liftFC $ KV $ Incr key id
 
 -- | Set the value of a hash field
-hset :: KVDBKey -> KVDBField -> KVDBValue -> KVDB Bool
+hset :: KVDBKey -> KVDBField -> KVDBValue -> KVDB Integer
 hset key field value = ExceptT $ liftFC $ KV $ HSet key field value id
 
 -- | Get the value of a hash field

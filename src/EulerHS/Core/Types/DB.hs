@@ -69,6 +69,7 @@ import           EulerHS.Prelude
 
 import qualified Data.Pool as DP
 import           Data.Time.Clock (NominalDiffTime)
+import qualified Data.Text as T
 import qualified Database.Beam as B
 import qualified Database.Beam.Backend.SQL as B
 import qualified Database.Beam.Backend.SQL.BeamExtensions as B
@@ -150,7 +151,7 @@ instance BeamRunner BS.SqliteM where
 
 instance BeamRunner BP.Pg where
   getBeamDebugRunner (NativePGConn conn) beM =
-    \logger -> BP.runBeamPostgresDebug logger conn beM
+    \logger -> BP.runBeamPostgresDebug (logger . T.pack) conn beM
   getBeamDebugRunner _ _ = \_ -> error "Not a Postgres connection"
 
 instance BeamRunner BM.MySQLM where

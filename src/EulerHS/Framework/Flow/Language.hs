@@ -43,7 +43,7 @@ import qualified EulerHS.Core.Language as L
 import qualified EulerHS.Core.PubSub.Language as PSL
 import qualified EulerHS.Core.Types as T
 import           EulerHS.Framework.Runtime (FlowRuntime)
-import           EulerHS.Prelude hiding (getOption, throwM)
+import           EulerHS.Prelude hiding (throwM)
 import           Servant.Client (BaseUrl, ClientError)
 
 -- | Flow language.

@@ -277,10 +277,10 @@ interpretFlowMethod _ R.FlowRuntime {..} (L.DelOption k next) =
     let newMap = Map.delete k m
     putMVar _options newMap
 
-interpretFlowMethod _ R.FlowRuntime {..} (L.GenerateGUID next) = do
+interpretFlowMethod _ R.FlowRuntime {} (L.GenerateGUID next) = do
   next <$> (UUID.toText <$> UUID.nextRandom)
 
-interpretFlowMethod _ R.FlowRuntime {..} (L.RunSysCmd cmd next) =
+interpretFlowMethod _ R.FlowRuntime {} (L.RunSysCmd cmd next) =
   next <$> readCreateProcess (shell cmd) ""
 
 ----------------------------------------------------------------------
@@ -291,7 +291,7 @@ interpretFlowMethod mbFlowGuid rt (L.Fork _desc _newFlowGUID flow next) = do
 
 ----------------------------------------------------------------------
 
-interpretFlowMethod _ R.FlowRuntime {..} (L.Await mbMcs (T.Awaitable awaitableMVar) next) = do
+interpretFlowMethod _ R.FlowRuntime {} (L.Await mbMcs (T.Awaitable awaitableMVar) next) = do
   let act = case mbMcs of
         Nothing -> do
           val <- readMVar awaitableMVar
@@ -301,7 +301,7 @@ interpretFlowMethod _ R.FlowRuntime {..} (L.Await mbMcs (T.Awaitable awaitableMV
         Just (T.Microseconds mcs) -> awaitMVarWithTimeout awaitableMVar $ fromIntegral mcs
   next <$> act
 
-interpretFlowMethod _ R.FlowRuntime {..} (L.ThrowException ex _) = do
+interpretFlowMethod _ R.FlowRuntime {} (L.ThrowException ex _) = do
   throwIO ex
 
 interpretFlowMethod mbFlowGuid rt (L.CatchException comp handler cont) =

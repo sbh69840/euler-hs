@@ -161,7 +161,7 @@ interpretTransactionF runRedis (L.MultiExec dsl next) =
 
 interpretTransactionF runRedis (L.MultiExecWithHash h dsl next) =
   fmap next $
-    runRedis $ fmap (Right . fromRdTxResult) $ R.multiExecWithHash h $ foldF interpretKeyValueTxF dsl
+    runRedis $ fmap (Right . fromRdTxResult) $ R.multiExec $ foldF interpretKeyValueTxF dsl
 
 
 interpretDbF

@@ -2,9 +2,10 @@ module EulerHS.Core.Masking where
 
 
 import qualified Data.Aeson as Aeson
+import qualified Data.Aeson.Key as Aeson
 import           EulerHS.Prelude
 import qualified Network.HTTP.Types as HTTP
-import qualified Data.HashMap.Strict as HashMap
+import qualified Data.Aeson.KeyMap as KeyMap
 import           Data.HashSet (member)
 import qualified EulerHS.Core.Types.Logger as Log (LogMaskingConfig(..), MaskKeyType (..))
 import qualified Data.CaseInsensitive as CI
@@ -61,13 +62,13 @@ maskJSON shouldMask maskText (Aeson.Array r) =  Aeson.Array $ maskJSON shouldMas
 maskJSON _ _ value = value
 
 handleObject :: (Text -> Bool) -> Text -> Aeson.Object -> Aeson.Object
-handleObject shouldMask maskText = HashMap.mapWithKey maskingFn
+handleObject shouldMask maskText = KeyMap.mapWithKey maskingFn
   where
-    maskingFn key value = maskJSON shouldMask maskText $ updatedValue key value
+    maskingFn key value = maskJSON shouldMask maskText $ updatedValue (Aeson.toText key) value
     updatedValue key fn = if shouldMask key then Aeson.String maskText else fn
 
 handleQueryString :: ByteString -> Aeson.Value
-handleQueryString strg = Aeson.Object . fmap (Aeson.String . fromMaybe "") . HashMap.fromList $ HTTP.parseQueryText strg
+handleQueryString strg = Aeson.Object . fmap (Aeson.String . fromMaybe "") . KeyMap.fromList $ map (\ (k, v) -> (Aeson.fromText k, v)) $ HTTP.parseQueryText strg
 
 notSupportedPlaceHolder :: Text
 notSupportedPlaceHolder = "Logging Not Support For this content"
